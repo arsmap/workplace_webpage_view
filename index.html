@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARSMAP | 임베디드 SW·HW 전문 기업</title>
+  <meta name="description" content="ARSMAP은 임베디드 SW 개발부터 시제품 제작, 금형 제조, 양산까지 원스톱 솔루션을 제공합니다." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0D1B3E;
+      --navy2: #111D40;
+      --navy3: #162050;
+      --blue: #1E50D0;
+      --teal: #0891B2;
+      --teal2: #06C8E8;
+      --teal3: rgba(6,200,232,0.15);
+      --white: #FFFFFF;
+      --off: #F0F5FA;
+      --gray: #64748B;
+      --graylt: #CBD5E1;
+      --dark: #0D1B3E;
+      --accent: #F59E0B;
+      --line: rgba(6,200,232,0.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #fff;
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ─── SCROLLBAR ──────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--navy); }
+    ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+
+    /* ─── NAV ────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(13,27,62,0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%; height: 68px;
+      border-bottom: 1px solid var(--line);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(13,27,62,0.98);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.4);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.9rem; color: #fff;
+      letter-spacing: 5px; text-decoration: none;
+      display: flex; align-items: center; gap: 2px;
+    }
+    .nav-logo .accent { color: var(--teal2); }
+    .nav-logo .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--teal2); margin: 0 3px;
+      display: inline-block; animation: pulse 2s infinite;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      position: relative; padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--teal2);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--teal2); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--teal2); }
+    .nav-cta {
+      background: transparent; border: 1px solid var(--teal);
+      color: var(--teal2); padding: 8px 22px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      display: none;
+    }
+    .nav-cta:hover { background: var(--teal); color: #fff; }
+    .hamburger {
+      display: none; flex-direction: column;
+      gap: 5px; cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: rgba(255,255,255,0.8);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .mobile-menu {
+      display: none; position: fixed;
+      top: 68px; left: 0; right: 0;
+      background: rgba(13,27,62,0.98);
+      backdrop-filter: blur(20px);
+      padding: 2rem 6%; border-bottom: 1px solid var(--line);
+      z-index: 190;
+    }
+    .mobile-menu.open { display: block; }
+    .mobile-menu ul { list-style: none; display: flex; flex-direction: column; gap: 1.2rem; }
+    .mobile-menu a {
+      color: rgba(255,255,255,0.7); text-decoration: none;
+      font-family: 'Rajdhani', sans-serif; font-weight: 600;
+      font-size: 1rem; letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    /* ─── HERO ───────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      background: var(--navy);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 130px 6% 80px 14%;
+    }
+
+    /* Circuit grid background */
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(6,200,232,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6,200,232,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    /* Radial glow */
+    .hero-glow {
+      position: absolute; z-index: 0;
+      border-radius: 50%; pointer-events: none; filter: blur(80px);
+    }
+    .hero-glow.g1 {
+      width: 700px; height: 700px;
+      right: -100px; top: -200px;
+      background: radial-gradient(circle, rgba(8,145,178,0.25), transparent 70%);
+    }
+    .hero-glow.g2 {
+      width: 400px; height: 400px;
+      left: 30%; bottom: -100px;
+      background: radial-gradient(circle, rgba(30,80,208,0.2), transparent 70%);
+    }
+    .hero-glow.g3 {
+      width: 200px; height: 200px;
+      right: 20%; top: 30%;
+      background: radial-gradient(circle, rgba(6,200,232,0.15), transparent 70%);
+    }
+
+    /* Animated corner brackets */
+    .hero-corner {
+      position: absolute; width: 60px; height: 60px;
+      border-color: rgba(6,200,232,0.4); border-style: solid;
+      pointer-events: none; animation: fadeIn 1.5s ease both;
+    }
+    .hero-corner.tl { top: 76px; left: 6%; border-width: 2px 0 0 2px; }
+    .hero-corner.br { bottom: 60px; right: 6%; border-width: 0 2px 2px 0; animation-delay: 0.3s; }
+
+    .hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(6,200,232,0.08);
+      border: 1px solid rgba(6,200,232,0.3);
+      border-radius: 0; padding: 6px 18px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem; color: var(--teal2);
+      letter-spacing: 3px; text-transform: uppercase;
+      margin-bottom: 2rem; animation: slideRight 0.8s ease both;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--teal2); animation: pulse 1.5s infinite;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 13vw, 11rem);
+      color: #fff; line-height: 0.9;
+      letter-spacing: 8px;
+      animation: slideUp 0.9s 0.1s ease both;
+    }
+    .hero-title .line2 {
+      display: block;
+      -webkit-text-stroke: 2px rgba(6,200,232,0.6);
+      color: transparent; letter-spacing: 6px;
+      font-size: clamp(2rem, 5.5vw, 5.5rem);
+    }
+
+    .hero-divider {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin: 2rem 0; animation: slideUp 0.9s 0.2s ease both;
+    }
+    .hero-divider-line {
+      height: 1px; width: 80px; background: var(--teal);
+    }
+    .hero-divider-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--teal2); letter-spacing: 3px; text-transform: uppercase;
+    }
+
+    .hero-desc {
+      max-width: 560px;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.95rem; line-height: 1.9;
+      animation: slideUp 0.9s 0.3s ease both;
+    }
+    .hero-desc strong { color: rgba(255,255,255,0.85); font-weight: 500; }
+
+    .hero-stats {
+      display: flex; gap: 4rem; margin-top: 3.5rem;
+      animation: slideUp 0.9s 0.4s ease both;
+    }
+    .hero-stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem; color: #fff; line-height: 1;
+    }
+    .hero-stat-val em { color: var(--teal2); font-style: normal; font-size: 1.6rem; }
+    .hero-stat-ko { font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
+    .hero-stat-en {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; color: rgba(255,255,255,0.2);
+      text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
+    }
+
+    .hero-actions {
+      display: flex; gap: 1.2rem; margin-top: 3.5rem;
+      animation: slideUp 0.9s 0.5s ease both;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--teal); color: #fff;
+      padding: 14px 32px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--teal2); transform: translateY(-2px); }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover svg { transform: translateX(4px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
+      padding: 14px 32px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--teal2); color: var(--teal2); }
+
+    /* Scrolldown indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 3.5rem; left: 14%;
+      display: flex; align-items: center; gap: 10px;
+      z-index: 1; animation: fadeIn 1s 1s ease both;
+    }
+    .scroll-line {
+      width: 40px; height: 1px; background: rgba(255,255,255,0.2);
+      position: relative; overflow: hidden;
+    }
+    .scroll-line::after {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%; background: var(--teal2);
+      animation: scrollLine 2s 1.5s ease infinite;
+    }
+    .scroll-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem; color: rgba(255,255,255,0.3);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    /* ─── SECTIONS BASE ──────────────────────────── */
+    section {
+      padding: 110px 6% 140px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .section-eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .section-eyebrow-line { width: 40px; height: 1px; background: var(--teal); }
+    .section-eyebrow-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem; color: var(--teal);
+      letter-spacing: 3px; text-transform: uppercase;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900; color: var(--navy); line-height: 1.15;
+    }
+    .section-title-light { color: #fff; }
+    .section-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; color: var(--gray);
+      font-style: italic; margin-top: 4px;
+    }
+    .section-sub-light { color: rgba(255,255,255,0.25); }
+
+    /* ─── ABOUT ──────────────────────────────────── */
+    #about { background: var(--off); position: relative; overflow: hidden; }
+    #about::before {
+      content: 'ARSMAP';
+      position: absolute; right: -2%; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(8rem, 16vw, 16rem);
+      color: rgba(13,27,62,0.04);
+      line-height: 1; letter-spacing: 10px;
+      pointer-events: none; user-select: none;
+    }
+
+    .about-layout {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; margin-top: 4rem; align-items: start;
+      position: relative; z-index: 1;
+    }
+    .about-text p {
+      color: var(--gray); line-height: 1.95;
+      font-size: 0.95rem; margin-top: 1.2rem;
+    }
+    .about-text p:first-child { margin-top: 0; }
+    .about-text .en {
+      font-style: italic; color: #94a3b8;
+      font-size: 0.87rem; margin-top: 0.4rem;
+    }
+    .about-highlight {
+      margin-top: 2.5rem; padding: 1.5rem;
+      border-left: 3px solid var(--teal);
+      background: rgba(8,145,178,0.05);
+    }
+    .about-highlight p {
+      color: var(--navy); font-weight: 500;
+      font-size: 0.95rem; line-height: 1.7; margin: 0;
+    }
+
+    .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #dde6f0; }
+    .about-stat {
+      background: #fff; padding: 2.2rem 2rem;
+      position: relative; overflow: hidden;
+      transition: transform 0.25s;
+    }
+    .about-stat:hover { transform: translateY(-3px); }
+    .about-stat::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--teal);
+    }
+    .about-stat:nth-child(2)::before { background: var(--blue); }
+    .about-stat:nth-child(3)::before { background: #7C3AED; }
+    .about-stat:nth-child(4)::before { background: var(--accent); }
+    .about-stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem; color: var(--navy); line-height: 1;
+    }
+    .about-stat-num em { color: var(--teal); font-style: normal; font-size: 1.4rem; }
+    .about-stat-ko { font-size: 0.85rem; font-weight: 700; color: var(--dark); margin-top: 6px; }
+    .about-stat-en { font-size: 0.68rem; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
+
+    /* ─── SERVICES ───────────────────────────────── */
+    #services { background: var(--navy); position: relative; overflow: hidden; }
+    #services::after {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(6,200,232,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6,200,232,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .services-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 4rem;
+    }
+    .services-count {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 6rem; color: rgba(255,255,255,0.04);
+      line-height: 1;
+    }
+
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: rgba(255,255,255,0.06);
+      position: relative; z-index: 1;
+    }
+    .service-item {
+      background: var(--navy); padding: 2.4rem 2rem;
+      position: relative; overflow: hidden;
+      cursor: default; transition: background 0.3s;
+    }
+    .service-item::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; width: 3px; height: 0;
+      background: var(--teal2);
+      transition: height 0.35s ease;
+    }
+    .service-item:hover { background: rgba(6,200,232,0.05); }
+    .service-item:hover::before { height: 100%; }
+
+    .service-item:nth-child(2) { --sc: #2563EB; }
+    .service-item:nth-child(3) { --sc: #7C3AED; }
+    .service-item:nth-child(4) { --sc: #0D9488; }
+    .service-item:nth-child(5) { --sc: #DC2626; }
+    .service-item:nth-child(6) { --sc: #D97706; }
+    .service-item:nth-child(7) { --sc: #059669; }
+    .service-item:nth-child(8) { --sc: #7C3AED; }
+    .service-item:nth-child(9) { --sc: var(--teal); }
+    .service-item:nth-child(2)::before { background: var(--sc); }
+    .service-item:nth-child(3)::before { background: var(--sc); }
+    .service-item:nth-child(4)::before { background: var(--sc); }
+    .service-item:nth-child(5)::before { background: var(--sc); }
+    .service-item:nth-child(6)::before { background: var(--sc); }
+    .service-item:nth-child(7)::before { background: var(--sc); }
+    .service-item:nth-child(8)::before { background: var(--sc); }
+    .service-item:nth-child(9)::before { background: var(--sc); }
+
+    .service-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; color: rgba(255,255,255,0.15);
+      letter-spacing: 2px; margin-bottom: 1.5rem;
+    }
+    .service-icon-wrap {
+      width: 48px; height: 48px;
+      border: 1px solid rgba(6,200,232,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.2rem;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .service-item:hover .service-icon-wrap {
+      border-color: rgba(6,200,232,0.6);
+      background: rgba(6,200,232,0.08);
+    }
+    .service-ko { font-size: 1rem; font-weight: 700; color: #fff; }
+    .service-en {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem; color: rgba(255,255,255,0.25);
+      font-style: italic; margin-top: 4px;
+    }
+    .service-desc {
+      font-size: 0.83rem; color: rgba(255,255,255,0.4);
+      line-height: 1.7; margin-top: 1rem;
+    }
+
+    /* ─── PROJECTS ───────────────────────────────── */
+    #projects { background: #fff; }
+
+    .projects-intro {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; margin-bottom: 4rem;
+    }
+    .projects-tagline {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 900; color: var(--navy);
+      line-height: 1.3; margin-top: 1.5rem;
+    }
+    .projects-tagline em { color: var(--teal); font-style: normal; }
+    .projects-desc {
+      color: var(--gray); line-height: 1.9;
+      font-size: 0.92rem; margin-top: 1.2rem;
+    }
+
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: #e8eef5;
+    }
+    .project-card {
+      background: #fff; padding: 1.8rem 1.5rem;
+      position: relative; cursor: default;
+      transition: background 0.25s, transform 0.25s;
+      border-top: 2px solid transparent;
+    }
+    .project-card:hover {
+      background: var(--navy);
+      transform: translateY(-4px);
+      z-index: 2;
+      box-shadow: 0 20px 50px rgba(13,27,62,0.18);
+      border-top-color: var(--teal2);
+    }
+    .project-card:nth-child(3n+2):hover { border-top-color: #2563EB; }
+    .project-card:nth-child(3n+3):hover { border-top-color: #7C3AED; }
+
+    .proj-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem; color: #e8eef5; line-height: 1;
+      transition: color 0.25s;
+    }
+    .project-card:hover .proj-num { color: rgba(255,255,255,0.08); }
+    .proj-tag {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem; color: var(--teal);
+      background: rgba(8,145,178,0.08);
+      border: 1px solid rgba(8,145,178,0.25);
+      padding: 2px 8px; margin-bottom: 0.6rem;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: color 0.25s, background 0.25s, border-color 0.25s;
+    }
+    .project-card:hover .proj-tag {
+      color: var(--teal2);
+      background: rgba(6,200,232,0.1);
+      border-color: rgba(6,200,232,0.3);
+    }
+    .proj-ko { font-size: 0.88rem; font-weight: 700; color: var(--navy); line-height: 1.5; transition: color 0.25s; }
+    .project-card:hover .proj-ko { color: #fff; }
+    .proj-en { font-size: 0.68rem; color: var(--graylt); font-style: italic; margin-top: 4px; transition: color 0.25s; }
+    .project-card:hover .proj-en { color: rgba(255,255,255,0.25); }
+
+    /* ─── WHY ────────────────────────────────────── */
+    #why { background: var(--navy2); position: relative; overflow: hidden; }
+    #why::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal2), transparent);
+    }
+
+    .why-layout {
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 6rem; margin-top: 4rem; align-items: start;
+    }
+    .why-left p {
+      color: rgba(255,255,255,0.45); font-size: 0.92rem;
+      line-height: 1.9; margin-top: 1.5rem;
+    }
+
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .why-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 2.5rem 2rem;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+    .why-card:hover {
+      border-color: rgba(6,200,232,0.3);
+      background: rgba(6,200,232,0.04);
+      transform: translateY(-4px);
+    }
+    .why-card::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .why-card:nth-child(1)::after { background: var(--teal2); }
+    .why-card:nth-child(2)::after { background: #2563EB; }
+    .why-card:nth-child(3)::after { background: var(--accent); }
+    .why-card:nth-child(4)::after { background: #059669; }
+    .why-card:hover::after { opacity: 1; }
+
+    .why-icon {
+      font-size: 2rem; display: block; margin-bottom: 1.5rem;
+      filter: grayscale(0.3);
+    }
+    .why-ko { font-size: 1.05rem; font-weight: 700; color: #fff; }
+    .why-en {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; color: var(--teal); font-style: italic;
+      letter-spacing: 1px; margin-top: 3px;
+    }
+    .why-bar { width: 32px; height: 2px; background: rgba(255,255,255,0.1); margin: 1.2rem 0; }
+    .why-desc { font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.8; }
+    .why-desc-en { font-size: 0.75rem; color: rgba(255,255,255,0.2); font-style: italic; margin-top: 0.5rem; line-height: 1.6; }
+
+    /* ─── CONTACT ────────────────────────────────── */
+    #contact { background: var(--navy); min-height: auto; }
+    #contact::before {
+      display: none;
+    }
+
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1.4fr;
+      gap: 5rem; margin-top: 4rem; align-items: start;
+    }
+    .contact-info-title {
+      font-size: 1rem; font-weight: 700; color: #fff;
+      margin-bottom: 2rem;
+    }
+    .contact-item {
+      display: flex; align-items: flex-start;
+      gap: 1.2rem; margin-bottom: 2rem;
+    }
+    .contact-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      border: 1px solid rgba(6,200,232,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .contact-icon:hover { background: rgba(6,200,232,0.1); border-color: rgba(6,200,232,0.6); }
+    .contact-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; color: var(--teal2);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    .contact-val { font-size: 0.92rem; color: rgba(255,255,255,0.75); margin-top: 4px; font-weight: 500; }
+
+    .form-group { margin-bottom: 1.4rem; }
+    .form-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; color: rgba(6,200,232,0.7);
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; padding: 13px 16px;
+      font-size: 0.9rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--teal);
+      background: rgba(6,200,232,0.04);
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.2); }
+    .form-textarea { resize: vertical; min-height: 130px; }
+    .form-submit {
+      width: 100%; padding: 15px;
+      background: var(--teal); color: #fff; border: none;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      cursor: pointer; margin-top: 0.5rem;
+      transition: background 0.2s, transform 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .form-submit:hover { background: var(--teal2); transform: translateY(-2px); }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      background: #070F22;
+      padding: 1.29rem 6%;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(6,200,232,0.1);
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; color: rgba(255,255,255,0.4);
+      letter-spacing: 5px;
+    }
+    .footer-logo span { color: var(--teal2); }
+    .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.2); }
+    .footer-nav { display: flex; gap: 1.8rem; }
+    .footer-nav a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; color: rgba(255,255,255,0.2);
+      text-decoration: none; letter-spacing: 1px;
+      text-transform: uppercase; transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--teal2); }
+    .footer-visitor {
+      display: flex; align-items: center; gap: 0.8rem;
+      font-family: 'Space Mono', monospace;
+    }
+    .footer-visitor-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .footer-visitor-label {
+      font-size: 0.5rem; color: rgba(255,255,255,0.2);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    .footer-visitor-val { font-size: 0.78rem; color: var(--teal2); }
+    .footer-visitor-sep { color: rgba(255,255,255,0.1); font-size: 0.7rem; }
+
+    /* ─── SECTION NAV BUTTON ─────────────────────── */
+    .section-nav {
+      position: absolute;
+      top: 110px;
+      right: 6%;
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .section-nav-btn {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.6);
+      padding: 13px 28px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      transition: border-color 0.25s, color 0.25s, background 0.25s, transform 0.25s;
+    }
+    .section-nav-btn:hover {
+      border-color: var(--teal2);
+      color: var(--teal2);
+      transform: translateY(-2px);
+    }
+    .section-nav-btn svg { transition: transform 0.25s; }
+    .section-nav-btn:hover svg { transform: translateX(5px); }
+
+    /* Dark variant (for light-bg sections) */
+    .section-nav-btn.dark {
+      border-color: rgba(13,27,62,0.2);
+      color: rgba(13,27,62,0.5);
+    }
+    .section-nav-btn.dark:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+    .section-nav-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; color: rgba(255,255,255,0.2);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    .section-nav-label.dark { color: rgba(13,27,62,0.3); }
+
+    /* ─── REVEAL ANIMATIONS ──────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-left {
+      opacity: 0; transform: translateX(-28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: none; }
+
+    /* ─── KEYFRAMES ──────────────────────────────── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    @keyframes scrollLine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 1100px) {
+      .projects-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .about-layout, .contact-grid, .projects-intro, .why-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .services-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    }
+    @media (max-width: 560px) {
+      .services-grid, .projects-grid, .about-stats { grid-template-columns: 1fr; }
+      .hero-stats { flex-wrap: wrap; gap: 2rem; }
+      .hero-actions { flex-direction: column; }
+      section { padding: 70px 5%; }
+      .hero-corner { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">ARS<span class="accent">MAP</span><span class="dot"></span></a>
+  <ul class="nav-links">
+    <li><a href="#about">회사소개</a></li>
+    <li><a href="#services">서비스</a></li>
+    <li><a href="#projects">포트폴리오</a></li>
+    <li><a href="#why">Why ARSMAP</a></li>
+    <li><a href="#contact">연락처</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta" style="display:inline-flex;">문의하기</a>
+  <div class="hamburger" id="hamburger" aria-label="메뉴">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#about" onclick="closeMobile()">회사소개</a></li>
+    <li><a href="#services" onclick="closeMobile()">서비스</a></li>
+    <li><a href="#projects" onclick="closeMobile()">포트폴리오</a></li>
+    <li><a href="#why" onclick="closeMobile()">Why ARSMAP</a></li>
+    <li><a href="#contact" onclick="closeMobile()">연락처</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow g1"></div>
+  <div class="hero-glow g2"></div>
+  <div class="hero-glow g3"></div>
+  <div class="hero-corner tl"></div>
+  <div class="hero-corner br"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Since 2011 · Seoul, Korea · Embedded System · Product Design · Prototyping
+    </div>
+
+    <h1 class="hero-title">
+      ARS<span style="color:var(--teal2)">MAP</span>
+      <span class="line2">DRIVEN TO COMPLETION</span>
+    </h1>
+
+    <div class="hero-divider">
+      <span class="hero-divider-line"></span>
+      <span class="hero-divider-text">기술로 완성하는 원스톱 솔루션</span>
+    </div>
+
+    <p class="hero-desc">
+      <strong>임베디드 시스템 개발부터 제품 디자인, 기구설계, 시제품 제작, 금형 제조, 양산까지</strong><br>
+      전 과정을 하나의 파트너와 함께하세요.<br>
+      <span style="font-size:0.87rem; opacity:0.6; font-style:italic;">
+        From embedded system development to product design, mechanical engineering,<br>
+      prototyping, mold manufacturing, and mass production — all with one trusted partner.
+      </span>
+    </p>
+
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">2011<em>년</em></div>
+        <div class="hero-stat-ko">설립</div>
+        <div class="hero-stat-en">Founded</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">14<em>+</em></div>
+        <div class="hero-stat-ko">년 경력</div>
+        <div class="hero-stat-en">Years of Exp.</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">9<em>개</em></div>
+        <div class="hero-stat-ko">서비스 분야</div>
+        <div class="hero-stat-en">Categories</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">12<em>+</em></div>
+        <div class="hero-stat-ko">주요 프로젝트</div>
+        <div class="hero-stat-en">Projects</div>
+      </div>
+    </div><!-- end hero-stats -->
+
+  </div><!-- end hero-content -->
+
+  <div class="section-nav" style="top:110px; animation: slideUp 0.9s 0.5s ease both; opacity:0;">
+    <span class="section-nav-label">Next</span>
+    <a href="#about" class="section-nav-btn">
+      회사 소개 보기
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll to explore</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-eyebrow reveal">
+    <span class="section-eyebrow-line"></span>
+    <span class="section-eyebrow-text">Company Overview</span>
+  </div>
+  <h2 class="section-title reveal">회사 소개</h2>
+  <div class="section-sub reveal">About ARSMAP</div>
+
+  <div class="about-layout">
+    <div class="about-text reveal-left">
+      <p>ARSMAP은 <strong>2011년 서울특별시에서 설립된 임베디드 SW·HW 전문 기업</strong>입니다. 소프트웨어 개발부터 금형 제작, 양산까지 전 과정을 원스톱으로 제공하며, 국내외 다양한 산업 분야에 최적의 기술 솔루션을 납품하고 있습니다.</p>
+      <p class="en">ARSMAP, founded in Seoul in 2011, is a specialized embedded SW &amp; HW company delivering end-to-end solutions across diverse industries at home and abroad.</p>
+      <p style="margin-top:1.5rem;">반도체, 선박·해양, 산업 자동화, IoT, 웨어러블, 완구 등 폭넓은 분야에서 검증된 기술력과 신뢰성으로 파트너사와 함께 성장해왔습니다.</p>
+      <p class="en">With proven expertise across semiconductors, marine, industrial automation, IoT, wearables, and more, we grow together with our partners.</p>
+      <div class="about-highlight">
+        <p>"기획부터 양산까지, 단 하나의 파트너로 완결되는 기술 여정."<br>
+        <span style="font-size:0.82rem; color:var(--gray); font-style:italic;">From concept to production — a complete technology journey with a single partner.</span></p>
+      </div>
+    </div>
+
+    <div class="about-stats reveal">
+      <div class="about-stat">
+        <div class="about-stat-num">2011<em>년</em></div>
+        <div class="about-stat-ko">설립 연도</div>
+        <div class="about-stat-en">Founded</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-num" style="font-size:1.6rem; line-height:1.3;">반도체<em> ·</em><br>선박<em> · </em>IoT</div>
+        <div class="about-stat-ko">주요 납품 분야</div>
+        <div class="about-stat-en">Key Industries</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-num">14<em>+년</em></div>
+        <div class="about-stat-ko">사업 경력</div>
+        <div class="about-stat-en">Experience</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-num">9<em>개</em></div>
+        <div class="about-stat-ko">서비스 분야</div>
+        <div class="about-stat-en">Categories</div>
+      </div>
+    </div>
+  </div>
+  <div class="section-nav reveal">
+    <span class="section-nav-label dark">Next</span>
+    <a href="#services" class="section-nav-btn dark">
+      서비스 보기
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header">
+    <div>
+      <div class="section-eyebrow reveal">
+        <span class="section-eyebrow-line" style="background:var(--teal2)"></span>
+        <span class="section-eyebrow-text" style="color:var(--teal2)">What We Do</span>
+      </div>
+      <h2 class="section-title section-title-light reveal">서비스</h2>
+      <div class="section-sub section-sub-light reveal">Our Services</div>
+    </div>
+    <div class="services-count">09</div>
+  </div>
+
+  <div class="services-grid">
+    <div class="service-item reveal">
+      <div class="service-num">01 / 09</div>
+      <div class="service-icon-wrap">🔧</div>
+      <div class="service-ko">임베디드 SW 개발</div>
+      <div class="service-en">Embedded SW Development</div>
+      <div class="service-desc">MCU/MPU 기반 펌웨어, 드라이버 및 BSP 개발</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">02 / 09</div>
+      <div class="service-icon-wrap">⚙️</div>
+      <div class="service-ko">자동화 제어 SW</div>
+      <div class="service-en">Automation Control SW</div>
+      <div class="service-desc">산업용 자동화 장비 제어 소프트웨어 개발 및 통합</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">03 / 09</div>
+      <div class="service-icon-wrap">🤖</div>
+      <div class="service-ko">로봇 자동화 SW</div>
+      <div class="service-en">Robot Automation SW</div>
+      <div class="service-desc">로봇 제어 알고리즘, 모션 플래닝, 인터페이스 개발</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">04 / 09</div>
+      <div class="service-icon-wrap">🖥️</div>
+      <div class="service-ko">커스텀 임베디드 서버</div>
+      <div class="service-en">Custom Embedded Server</div>
+      <div class="service-desc">산업 현장 맞춤형 임베디드 서버 시스템 설계·구현</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">05 / 09</div>
+      <div class="service-icon-wrap">💳</div>
+      <div class="service-ko">전용 결제 서버 솔루션</div>
+      <div class="service-en">Payment Server Solution</div>
+      <div class="service-desc">카드 단말 연동 및 결제 정산 서버 시스템 구축</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">06 / 09</div>
+      <div class="service-icon-wrap">🔩</div>
+      <div class="service-ko">시제품 제작</div>
+      <div class="service-en">Prototype Manufacturing</div>
+      <div class="service-desc">아이디어를 실제 동작하는 시제품으로 빠르게 구현</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">07 / 09</div>
+      <div class="service-icon-wrap">🏭</div>
+      <div class="service-ko">금형 제작</div>
+      <div class="service-en">Mold Manufacturing</div>
+      <div class="service-desc">프레스·사출·다이캐스팅 정밀 금형 설계 및 제작</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">08 / 09</div>
+      <div class="service-icon-wrap">📐</div>
+      <div class="service-ko">기구 디자인 및 설계</div>
+      <div class="service-en">Mechanical Design</div>
+      <div class="service-desc">제품 외관 및 내부 구조 3D 설계, 도면 작성</div>
+    </div>
+    <div class="service-item reveal">
+      <div class="service-num">09 / 09</div>
+      <div class="service-icon-wrap">📦</div>
+      <div class="service-ko">제품 양산</div>
+      <div class="service-en">Mass Production</div>
+      <div class="service-desc">검증된 시제품 기반 안정적인 양산 체계 구축·관리</div>
+    </div>
+  </div>
+  <div class="section-nav reveal">
+    <span class="section-nav-label">Next</span>
+    <a href="#projects" class="section-nav-btn">
+      포트폴리오 보기
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="projects-intro">
+    <div>
+      <div class="section-eyebrow reveal">
+        <span class="section-eyebrow-line"></span>
+        <span class="section-eyebrow-text">Track Record</span>
+      </div>
+      <h2 class="section-title reveal">주요 프로젝트</h2>
+      <div class="section-sub reveal">Project Portfolio</div>
+    </div>
+    <div class="reveal" style="padding-top:1rem;">
+      <p class="projects-tagline">다양한 산업 분야에서<br><em>검증된</em> 기술력</p>
+      <p class="projects-desc">반도체·선박·IoT·웨어러블 등 폭넓은 영역에서 축적된 12개 이상의 핵심 프로젝트 실적이 ARSMAP의 기술력을 증명합니다.</p>
+    </div>
+  </div>
+
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="proj-num">01</div>
+      <div class="proj-tag">디자인·시제품</div>
+      <div class="proj-ko">ETRI 실버케어 웨어러블 장치</div>
+      <div class="proj-en">ETRI Silver-Care Wearable Device</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">02</div>
+      <div class="proj-tag">디자인·시제품</div>
+      <div class="proj-ko">이미지 촬상식 원격검침 장치</div>
+      <div class="proj-en">Image-Based Remote Meter Reading</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">03</div>
+      <div class="proj-tag">디자인·시제품</div>
+      <div class="proj-ko">유아용 컬러 인식 완구형 로봇</div>
+      <div class="proj-en">Color-Recognition Toy Robot</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">04</div>
+      <div class="proj-tag">디자인·설계</div>
+      <div class="proj-ko">세미 3D 접촉형 측정기기</div>
+      <div class="proj-en">Semi-3D Contact Measurement Device</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">05</div>
+      <div class="proj-tag">임베디드 시스템</div>
+      <div class="proj-ko">RF형 생활폐기물 자동집하 임베디드 시스템</div>
+      <div class="proj-en">RF Waste Auto-Collection Embedded System</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">06</div>
+      <div class="proj-tag">서버 시스템</div>
+      <div class="proj-ko">RF형 생활폐기물 집하 결제 정산 서버</div>
+      <div class="proj-en">RF Waste Collection Payment Server</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">07</div>
+      <div class="proj-tag">디자인·시제품</div>
+      <div class="proj-ko">RF형 생활폐기물 카드단말 장치</div>
+      <div class="proj-en">RF Waste Card Terminal Device</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">08</div>
+      <div class="proj-tag">디자인·시제품</div>
+      <div class="proj-ko">선박 엔진용 SCR 제어시스템 케이스</div>
+      <div class="proj-en">Marine SCR Control System Case</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">09</div>
+      <div class="proj-tag">자동화 시스템</div>
+      <div class="proj-ko">반도체 패키징 OHT 연계 물류자동화</div>
+      <div class="proj-en">Semiconductor OHT Logistics Automation</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">10</div>
+      <div class="proj-tag">통합 시스템</div>
+      <div class="proj-ko">반도체 마스킹 라인 SECS/GEM 통합제어</div>
+      <div class="proj-en">Semiconductor SECS/GEM Integrated Control</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">11</div>
+      <div class="proj-tag">자동화 시스템</div>
+      <div class="proj-ko">반도체 공정 장비간 캘리브레이션 자동화</div>
+      <div class="proj-en">Semiconductor Calibration Automation</div>
+    </div>
+    <div class="project-card reveal">
+      <div class="proj-num">12</div>
+      <div class="proj-tag">디자인·시제품</div>
+      <div class="proj-ko">선박 엔진용 CMM 제어시스템 케이스</div>
+      <div class="proj-en">Marine CMM Control System Case</div>
+    </div>
+  </div>
+  <div class="section-nav reveal">
+    <span class="section-nav-label dark">Next</span>
+    <a href="#why" class="section-nav-btn dark">
+      Why ARSMAP 보기
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="why-layout">
+    <div class="why-left">
+      <div class="section-eyebrow reveal">
+        <span class="section-eyebrow-line" style="background:var(--teal2)"></span>
+        <span class="section-eyebrow-text" style="color:var(--teal2)">Why Choose Us</span>
+      </div>
+      <h2 class="section-title section-title-light reveal">ARSMAP을<br>선택해야 하는 이유</h2>
+      <p class="reveal">압도적인 기술력, 원스톱 서비스, 납기 신뢰성, 합리적인 가격. 단 하나의 파트너로 모든 것을 해결하세요.</p>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <span class="why-icon">⚡</span>
+        <div class="why-ko">압도적 기술력</div>
+        <div class="why-en">Superior Technology</div>
+        <div class="why-bar"></div>
+        <div class="why-desc">임베디드 SW부터 HW 설계까지 깊은 기술 전문성을 보유하고 있습니다.</div>
+        <div class="why-desc-en">Deep expertise spanning embedded SW to HW design across diverse industries.</div>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon">🔗</span>
+        <div class="why-ko">원스톱 서비스</div>
+        <div class="why-en">One-Stop Service</div>
+        <div class="why-bar"></div>
+        <div class="why-desc">기획·설계·시제품·금형·양산까지 단일 파트너로 완결됩니다.</div>
+        <div class="why-desc-en">From planning to production — all with one partner.</div>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon">🕐</span>
+        <div class="why-ko">납기 신뢰성</div>
+        <div class="why-en">Delivery Reliability</div>
+        <div class="why-bar"></div>
+        <div class="why-desc">철저한 일정 관리와 품질 보증으로 납기를 반드시 준수합니다.</div>
+        <div class="why-desc-en">Strict scheduling and quality assurance ensure on-time delivery.</div>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon">💰</span>
+        <div class="why-ko">가격 경쟁력</div>
+        <div class="why-en">Competitive Pricing</div>
+        <div class="why-bar"></div>
+        <div class="why-desc">불필요한 간접비를 제거하여 합리적이고 투명한 가격을 제공합니다.</div>
+        <div class="why-desc-en">Competitive and transparent pricing by eliminating unnecessary overhead.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-nav reveal">
+    <span class="section-nav-label">Next</span>
+    <a href="#contact" class="section-nav-btn">
+      문의하기
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-eyebrow reveal">
+    <span class="section-eyebrow-line" style="background:var(--teal2)"></span>
+    <span class="section-eyebrow-text" style="color:var(--teal2)">Get In Touch</span>
+  </div>
+  <h2 class="section-title section-title-light reveal">문의하기</h2>
+  <div class="section-sub section-sub-light reveal">Contact Us</div>
+
+  <div class="contact-grid">
+    <div class="reveal-left">
+      <div class="contact-info-title">프로젝트나 서비스에 대해<br>언제든 문의해 주세요.</div>
+      <div class="contact-item">
+        <div class="contact-icon">📍</div>
+        <div>
+          <div class="contact-label">Location</div>
+          <div class="contact-val">서울특별시 · Seoul, Korea</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📅</div>
+        <div>
+          <div class="contact-label">Founded</div>
+          <div class="contact-val">2011년 설립 · Est. 2011</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">🌐</div>
+        <div>
+          <div class="contact-label">Website</div>
+          <div class="contact-val">www.arsmap.com</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-val">admin@arsmap.com</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="form-group">
+        <label class="form-label">이름 / Name</label>
+        <input type="text" id="from_name" class="form-input" placeholder="홍길동 / Hong Gil-dong" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">이메일 / Email</label>
+        <input type="email" id="reply_to" class="form-input" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">문의 내용 / Message</label>
+        <textarea id="message" class="form-textarea" placeholder="프로젝트나 서비스에 대해 문의해 주세요. / Please describe your project or inquiry."></textarea>
+      </div>
+      <div id="form-status" style="display:none; margin-bottom:1rem; padding:12px 16px; font-size:0.85rem; letter-spacing:1px;"></div>
+      <button class="form-submit" id="form-submit-btn" onclick="sendEmail()">
+        문의 보내기
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="section-nav reveal">
+        <span class="section-nav-label">처음으로</span>
+        <a href="#hero" class="section-nav-btn" style="border-color:rgba(6,200,232,0.25); color:rgba(6,200,232,0.5);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="transform:rotate(-90deg)">
+            <path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          맨 위로
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ARS<span>MAP</span></div>
+  <div class="footer-copy">© 2025 ARSMAP. All rights reserved.</div>
+  <div class="footer-visitor">
+    <div class="footer-visitor-item">
+      <span class="footer-visitor-label">Today</span>
+      <span class="footer-visitor-val" id="visitor-today">–</span>
+    </div>
+    <span class="footer-visitor-sep">|</span>
+    <div class="footer-visitor-item">
+      <span class="footer-visitor-label">Total</span>
+      <span class="footer-visitor-val" id="visitor-total">–</span>
+    </div>
+  </div>
+  <nav class="footer-nav">
+    <a href="#hero">Top</a>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</footer>
+
+<script>
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobile() {
+    mobileMenu.classList.remove('open');
+  }
+
+  // Nav scroll state
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+    // Active nav link
+    let current = '';
+    document.querySelectorAll('section[id]').forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+    });
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal, .reveal-left');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+             setTimeout(() => entry.target.classList.add('visible'), i * 70);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+<!-- Visitor Counter -->
+<script>
+  (async function() {
+    try {
+      const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const [totalRes, todayRes] = await Promise.all([
+        fetch('https://api.counterapi.dev/v1/arsmap-homepage/total/up'),
+        fetch('https://api.counterapi.dev/v1/arsmap-homepage/d' + today + '/up')
+      ]);
+      if (totalRes.ok && todayRes.ok) {
+        const total = await totalRes.json();
+        const todayData = await todayRes.json();
+        document.getElementById('visitor-total').textContent = total.count.toLocaleString();
+        document.getElementById('visitor-today').textContent = todayData.count.toLocaleString();
+      }
+    } catch(e) {}
+  })();
+</script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ※ EmailJS 가입 후 아래 3가지 값을 교체하세요
+  // 1. emailjs.init()  → Public Key
+  // 2. serviceID       → Service ID
+  // 3. templateID      → Template ID
+  emailjs.init('itxFoslqdNrQEisC-');
+
+  function sendEmail() {
+    const name    = document.getElementById('from_name').value.trim();
+    const email   = document.getElementById('reply_to').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const status  = document.getElementById('form-status');
+    const btn     = document.getElementById('form-submit-btn');
+
+    // 유효성 검사
+    if (!name || !email || !message) {
+      status.style.display = 'block';
+      status.style.background = 'rgba(220,38,38,0.15)';
+      status.style.border = '1px solid rgba(220,38,38,0.4)';
+      status.style.color = '#f87171';
+      status.textContent = '⚠ 모든 항목을 입력해 주세요.';
+      return;
+    }
+
+    // 전송 중 상태
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    btn.textContent = '전송 중...';
+    status.style.display = 'none';
+
+    const templateParams = { from_name: name, reply_to: email, message: message };
+
+    emailjs.send('service_0fuvl6o', 'template_dral35b', templateParams)
+      .then(() => {
+        status.style.display = 'block';
+        status.style.background = 'rgba(5,150,105,0.15)';
+        status.style.border = '1px solid rgba(5,150,105,0.4)';
+        status.style.color = '#34d399';
+        status.textContent = '✓ 문의가 성공적으로 전송되었습니다. 빠른 시일 내 연락드리겠습니다.';
+        document.getElementById('from_name').value = '';
+        document.getElementById('reply_to').value = '';
+        document.getElementById('message').value = '';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.innerHTML = '문의 보내기 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }, (err) => {
+        status.style.display = 'block';
+        status.style.background = 'rgba(220,38,38,0.15)';
+        status.style.border = '1px solid rgba(220,38,38,0.4)';
+        status.style.color = '#f87171';
+        status.textContent = '✗ 전송 실패. 잠시 후 다시 시도하거나 admin@arsmap.com 으로 직접 연락해 주세요.';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.innerHTML = '문의 보내기 <svg width="16" height="16" viewBox="0 "round"/></svg>';
+        console.error('EmailJS error:', err);
+      });
+  }
+</script>
+</body>
+</html>
