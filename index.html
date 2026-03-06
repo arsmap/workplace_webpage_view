@@ -1411,22 +1411,19 @@
       });
   }
 
-  // Scroll spacer: ensures #contact can be scrolled to viewport top
-  function adjustScrollSpacer() {
-    let spacer = document.getElementById('scroll-end-spacer');
-    if (!spacer) {
-      spacer = document.createElement('div');
-      spacer.id = 'scroll-end-spacer';
-      document.body.appendChild(spacer);
-    }
-    spacer.style.height = '0px';
+  // Adjust #contact padding-bottom so contact+footer = 100vh (no blank area after footer)
+  function adjustContactPadding() {
     const contact = document.getElementById('contact');
-    const contactTop = contact.getBoundingClientRect().top + window.scrollY;
-    const needed = contactTop + window.innerHeight - document.body.scrollHeight;
-    spacer.style.height = Math.max(0, needed) + 'px';
+    const footer = document.querySelector('footer');
+    contact.style.paddingBottom = '';
+    const extra = window.innerHeight - contact.offsetHeight - footer.offsetHeight;
+    if (extra > 0) {
+      const base = parseInt(getComputedStyle(contact).paddingBottom) || 0;
+      contact.style.paddingBottom = (base + extra) + 'px';
+    }
   }
-  window.addEventListener('DOMContentLoaded', adjustScrollSpacer);
-  window.addEventListener('resize', adjustScrollSpacer);
+  window.addEventListener('DOMContentLoaded', adjustContactPadding);
+  window.addEventListener('resize', adjustContactPadding);
 </script>
 </body>
 </html>
