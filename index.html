@@ -581,7 +581,7 @@
     .why-desc-en { font-size: 0.75rem; color: rgba(255,255,255,0.2); font-style: italic; margin-top: 0.5rem; line-height: 1.6; }
 
     /* ─── CONTACT ────────────────────────────────── */
-    #contact { background: var(--navy); min-height: 100vh; justify-content: flex-start; padding-top: 110px; }
+    #contact { background: var(--navy); min-height: auto; justify-content: flex-start; padding-top: 110px; }
     #contact::before {
       display: none;
     }
@@ -1272,6 +1272,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">ARS<span>MAP</span></div>
+  <span style="font-family:'Space Mono',monospace; font-size:0.55rem; color:rgba(255,255,255,0.07); letter-spacing:1px; user-select:text;">v2026.0306.6</span>
   <div class="footer-copy">© 2025 ARSMAP. All rights reserved.</div>
   <div class="footer-visitor">
     <div class="footer-visitor-item">
@@ -1409,6 +1410,23 @@
         console.error('EmailJS error:', err);
       });
   }
+
+  // Scroll spacer: ensures #contact can be scrolled to viewport top
+  function adjustScrollSpacer() {
+    let spacer = document.getElementById('scroll-end-spacer');
+    if (!spacer) {
+      spacer = document.createElement('div');
+      spacer.id = 'scroll-end-spacer';
+      document.body.appendChild(spacer);
+    }
+    spacer.style.height = '0px';
+    const contact = document.getElementById('contact');
+    const contactTop = contact.getBoundingClientRect().top + window.scrollY;
+    const needed = contactTop + window.innerHeight - document.body.scrollHeight;
+    spacer.style.height = Math.max(0, needed) + 'px';
+  }
+  window.addEventListener('DOMContentLoaded', adjustScrollSpacer);
+  window.addEventListener('resize', adjustScrollSpacer);
 </script>
 </body>
 </html>
