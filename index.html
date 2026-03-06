@@ -581,7 +581,7 @@
     .why-desc-en { font-size: 0.75rem; color: rgba(255,255,255,0.2); font-style: italic; margin-top: 0.5rem; line-height: 1.6; }
 
     /* ─── CONTACT ────────────────────────────────── */
-    #contact { background: var(--navy); min-height: auto; }
+    #contact { background: var(--navy); min-height: auto; justify-content: flex-start; padding-top: 110px; }
     #contact::before {
       display: none;
     }
@@ -1255,16 +1255,17 @@
         </svg>
       </button>
 
-      <div class="section-nav reveal">
-        <span class="section-nav-label">처음으로</span>
-        <a href="#hero" class="section-nav-btn" style="border-color:rgba(6,200,232,0.25); color:rgba(6,200,232,0.5);">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="transform:rotate(-90deg)">
-            <path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          맨 위로
-        </a>
-      </div>
     </div>
+  </div>
+
+  <div class="section-nav reveal">
+    <span class="section-nav-label">처음으로</span>
+    <a href="#hero" class="section-nav-btn" style="border-color:rgba(6,200,232,0.25); color:rgba(6,200,232,0.5);">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="transform:rotate(-90deg)">
+        <path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      맨 위로
+    </a>
   </div>
 </section>
 
