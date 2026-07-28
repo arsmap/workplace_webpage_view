@@ -1274,7 +1274,7 @@
 <footer>
   <div class="footer-left">
     <div class="footer-logo">ARS<span>MAP</span></div>
-    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; color:rgba(255,255,255,0.07); letter-spacing:1px; user-select:text;">v2026.0306.10</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; color:rgba(255,255,255,0.07); letter-spacing:1px; user-select:text;">v2026.0728.1</span>
   </div>
   <div class="footer-copy">© 2026 ARSMAP. All rights reserved.</div>
   <div class="footer-visitor">
@@ -1386,7 +1386,15 @@
     btn.textContent = '전송 중...';
     status.style.display = 'none';
 
-    const templateParams = { from_name: name, reply_to: email, message: message };
+    // Send both naming conventions so the template fills in regardless of
+    // whether its variables are named {{from_name}}/{{reply_to}} or {{name}}/{{email}}
+    const templateParams = {
+      from_name: name,
+      name: name,
+      reply_to: email,
+      email: email,
+      message: message
+    };
 
     emailjs.send('service_0fuvl6o', 'template_dral35b', templateParams)
       .then(() => {
